@@ -10,7 +10,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 
 /**
- * Displays feeds for topics, either last updated or created.
+ * Displays feeds for topics, either last updated or created, possibly filtered by tag.
  *
  * @package AmauryCarrade\FlarumFeeds\Controller
  * @see AmauryCarrade\FlarumFeeds\Controller\LastDiscussionsFeedController Controller for last created discussions
@@ -57,6 +57,15 @@ class DiscussionsActivityFeedController extends AbstractFeedController
 
         $sort = array_pull($queryParams, 'sort');
         $q = array_pull($queryParams, 'q');
+        $tags = $this->getTags($request);
+
+        if ($tags != null)
+        {
+            $tags_search = [];
+            foreach ($tags as $tag) $tags_search[] = 'tag:' . $tag;
+
+            $q .= (!empty($q) ? ' ' : '') . implode(' ', $tags_search);
+        }
 
         $params = [
             'sort' => $sort && isset($this->sortMap[$sort]) ? $this->sortMap[$sort] : ($this->lastTopics ? $this->sortMap['newest'] : $this->sortMap['latest']),
@@ -94,7 +103,7 @@ class DiscussionsActivityFeedController extends AbstractFeedController
                 'description' => $this->summary($content->contentHtml),
                 'content'     => $content->contentHtml,
                 'permalink'   => $this->url->toRoute('discussion', ['id' => $discussion->id . '-' . $discussion->attributes->slug]),
-                'pubdate'     => $this->lastTopics ? $discussion->attributes->startTime : $discussion->attributes->lastTime,
+                'pubdate'     => $this->parseDate($this->lastTopics ? $discussion->attributes->startTime : $discussion->attributes->lastTime),
                 'author'      => $this->getRelationship($last_discussions, $this->lastTopics ? $discussion->relationships->startUser : $discussion->relationships->lastUser)->username
             ];
         }
@@ -119,5 +128,15 @@ class DiscussionsActivityFeedController extends AbstractFeedController
     private function getDocument(User $actor, array $params)
     {
         return $this->getAPIDocument('Flarum\Api\Controller\ListDiscussionsController', $actor, $params);
+    }
+
+    /**
+     * Returns the tags to filter on
+     * @param Request $request
+     * @return array|null Tags or null
+     */
+    protected function getTags(Request $request)
+    {
+        return null;
     }
 }

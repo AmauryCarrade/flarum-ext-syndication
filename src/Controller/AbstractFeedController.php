@@ -2,6 +2,7 @@
 
 namespace AmauryCarrade\FlarumFeeds\Controller;
 
+use DateTime;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Flarum\Core\User;
 use Flarum\Forum\UrlGenerator;
@@ -141,10 +142,21 @@ abstract class AbstractFeedController implements ControllerInterface
      */
     protected function summary($string, $length = 600)
     {
-        $string = strip_tags($string);
+        $string = trim(strip_tags($string));
 
         if (mb_strlen($string, 'utf8') < $length) return $string;
         return mb_substr($string, 0, $length) . '...';
+    }
+
+    /**
+     * Parses a date in an API response.
+     *
+     * @param string $date A date
+     * @return DateTime A DateTime representation.
+     */
+    protected function parseDate($date)
+    {
+        return DateTime::createFromFormat(DateTime::ATOM, $date);
     }
 
     /**

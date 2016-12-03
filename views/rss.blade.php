@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom">
 
     <channel>
         <title><![CDATA[{!! $title !!}]]></title>
         <description><![CDATA[{!! $description !!}]]></description>
         <link><![CDATA[{!! $link !!}]]></link>
         <pubDate>{{ $pubDate->format(DateTime::RSS) }}</pubDate>
-        <ttl>1800</ttl>
+        <atom:link href="{{ $self_link }}" rel="self" type="application/rss+xml" />
 
         @foreach ($entries as $entry)
         <item>
@@ -16,7 +16,7 @@
             <content:encoded><![CDATA[{!! $entry['content'] or $entry['description'] !!}]]></content:encoded>
             <link>{{ $entry['permalink'] }}</link>
             <guid isPermaLink="true">{{ $entry['permalink'] }}</guid>
-            <pubDate>{{ $entry['pubdate'] }}</pubDate>
+            <pubDate>{{ $entry['pubdate']->format(DateTime::RSS) }}</pubDate>
         </item>
         @endforeach
 

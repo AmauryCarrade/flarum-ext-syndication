@@ -14,10 +14,19 @@ class AddFeedsRoutes
 
 	public function configureForumRoutes(ConfigureForumRoutes $event)
 	{
-		$event->get('/rss', 'feeds.rss.global', 'AmauryCarrade\FlarumFeeds\Controller\TopicsActivityFeedController');
-		$event->get('/atom', 'feeds.atom.global', 'AmauryCarrade\FlarumFeeds\Controller\TopicsActivityFeedController');
+		$event->get('/rss', 'feeds.rss.global', 'AmauryCarrade\FlarumFeeds\Controller\DiscussionsActivityFeedController');
+		$event->get('/atom', 'feeds.atom.global', 'AmauryCarrade\FlarumFeeds\Controller\DiscussionsActivityFeedController');
 
-		$event->get('/discussions/rss', 'feeds.rss.discussions', 'AmauryCarrade\FlarumFeeds\Controller\LastTopicsFeedController');
-		$event->get('/discussions/atom', 'feeds.atom.discussions', 'AmauryCarrade\FlarumFeeds\Controller\LastTopicsFeedController');
+		$event->get('/discussions/rss', 'feeds.rss.discussions', 'AmauryCarrade\FlarumFeeds\Controller\LastDiscussionsFeedController');
+		$event->get('/discussions/atom', 'feeds.atom.discussions', 'AmauryCarrade\FlarumFeeds\Controller\LastDiscussionsFeedController');
+
+        if (class_exists('Flarum\Tags\Tag'))
+        {
+            $event->get('/t/{tag}/rss', 'feeds.rss.tag', 'AmauryCarrade\FlarumFeeds\Controller\TagsFeedController');
+            $event->get('/t/{tag}/atom', 'feeds.atom.tag', 'AmauryCarrade\FlarumFeeds\Controller\TagsFeedController');
+
+            $event->get('/t/{tag}/discussions/rss', 'feeds.rss.tag', 'AmauryCarrade\FlarumFeeds\Controller\LastDiscussionsByTagFeedController');
+            $event->get('/t/{tag}/discussions/atom', 'feeds.atom.tag', 'AmauryCarrade\FlarumFeeds\Controller\LastDiscussionsByTagFeedController');
+        }
 	}
 }
