@@ -4,7 +4,7 @@
 
     <channel>
         <title><![CDATA[{!! $title !!}]]></title>
-        <description><![CDATA[{!! $description !!}]]></description>
+        @if (!empty($description))<description><![CDATA[{!! $description !!}]]></description>@endif
         <link><![CDATA[{!! $link !!}]]></link>
         <pubDate>{{ $pubDate->format(DateTime::RSS) }}</pubDate>
         <atom:link href="{{ $self_link }}" rel="self" type="application/rss+xml" />
@@ -15,7 +15,7 @@
             <description><![CDATA[{!! $entry['description'] !!}]]></description>
             <content:encoded><![CDATA[{!! $entry['content'] or $entry['description'] !!}]]></content:encoded>
             <link>{{ $entry['permalink'] }}</link>
-            <guid isPermaLink="true">{{ $entry['permalink'] }}</guid>
+            <guid isPermaLink="{{ !isset($entry['id']) }}">{{ $entry['id'] or $entry['permalink'] }}</guid>
             <pubDate>{{ $entry['pubdate']->format(DateTime::RSS) }}</pubDate>
         </item>
         @endforeach

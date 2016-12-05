@@ -3,6 +3,7 @@
 namespace AmauryCarrade\FlarumFeeds\Controller;
 
 use DateTime;
+use Flarum\Http\Exception\RouteNotFoundException;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Flarum\Core\User;
 use Flarum\Forum\UrlGenerator;
@@ -98,10 +99,16 @@ abstract class AbstractFeedController implements ControllerInterface
      * @param array  $body     The API request body (if any).
      *
      * @return \stdClass API response.
+     * @throws RouteNotFoundException If the API endpoint cannot be found, or if it cannot find what requested.
      */
     protected function getAPIDocument($endpoint, User $actor, array $params = [], array $body = [])
     {
-        return json_decode($this->api->send($endpoint, $actor, $params, $body)->getBody());
+        $response = $this->api->send($endpoint, $actor, $params, $body);
+
+        if ($response->getStatusCode() === 404)
+            throw new RouteNotFoundException;
+
+        return json_decode($response->getBody());
     }
 
     /**
@@ -172,6 +179,6 @@ abstract class AbstractFeedController implements ControllerInterface
     protected function getFeedType(Request $request)
     {
         $path = strtolower($request->getUri()->getPath());
-        return ends_with($path, 'atom') ? 'atom' : 'rss';
+        return starts_with($path, '/atom') ? 'atom' : 'rss';
     }
 }

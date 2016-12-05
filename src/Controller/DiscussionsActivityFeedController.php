@@ -78,7 +78,7 @@ class DiscussionsActivityFeedController extends AbstractFeedController
         $forum = $this->getForumDocument($actor);
         $last_discussions = $this->getDocument($actor, $params);
 
-        $feed_content = [];
+        $entries = [];
 
         foreach ($last_discussions->data as $discussion)
         {
@@ -98,7 +98,7 @@ class DiscussionsActivityFeedController extends AbstractFeedController
                 $content->contentHtml = '';
             }
 
-            $feed_content[] = [
+            $entries[] = [
                 'title'       => $discussion->attributes->title,
                 'description' => $this->summary($content->contentHtml),
                 'content'     => $content->contentHtml,
@@ -114,7 +114,7 @@ class DiscussionsActivityFeedController extends AbstractFeedController
             'description' => $forum->attributes->description,
             'link'        => $forum->attributes->baseUrl,
             'pubDate'     => new \DateTime(),
-            'entries'     => $feed_content
+            'entries'     => $entries
         ];
     }
 

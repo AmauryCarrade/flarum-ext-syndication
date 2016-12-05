@@ -17,16 +17,19 @@ class AddFeedsRoutes
 		$event->get('/rss', 'feeds.rss.global', 'AmauryCarrade\FlarumFeeds\Controller\DiscussionsActivityFeedController');
 		$event->get('/atom', 'feeds.atom.global', 'AmauryCarrade\FlarumFeeds\Controller\DiscussionsActivityFeedController');
 
-		$event->get('/discussions/rss', 'feeds.rss.discussions', 'AmauryCarrade\FlarumFeeds\Controller\LastDiscussionsFeedController');
-		$event->get('/discussions/atom', 'feeds.atom.discussions', 'AmauryCarrade\FlarumFeeds\Controller\LastDiscussionsFeedController');
+		$event->get('/rss/d', 'feeds.rss.discussions', 'AmauryCarrade\FlarumFeeds\Controller\LastDiscussionsFeedController');
+		$event->get('/atom/d', 'feeds.atom.discussions', 'AmauryCarrade\FlarumFeeds\Controller\LastDiscussionsFeedController');
+
+        $event->get('/rss/d/{id:\d+(?:-[^/]*)?}', 'feeds.rss.discussion', 'AmauryCarrade\FlarumFeeds\Controller\DiscussionFeedController');
+        $event->get('/atom/d/{id:\d+(?:-[^/]*)?}', 'feeds.atom.discussion', 'AmauryCarrade\FlarumFeeds\Controller\DiscussionFeedController');
 
         if (class_exists('Flarum\Tags\Tag'))
         {
-            $event->get('/t/{tag}/rss', 'feeds.rss.tag', 'AmauryCarrade\FlarumFeeds\Controller\TagsFeedController');
-            $event->get('/t/{tag}/atom', 'feeds.atom.tag', 'AmauryCarrade\FlarumFeeds\Controller\TagsFeedController');
+            $event->get('/rss/t/{tag}', 'feeds.rss.tag', 'AmauryCarrade\FlarumFeeds\Controller\TagsFeedController');
+            $event->get('/atom/t/{tag}', 'feeds.atom.tag', 'AmauryCarrade\FlarumFeeds\Controller\TagsFeedController');
 
-            $event->get('/t/{tag}/discussions/rss', 'feeds.rss.tag', 'AmauryCarrade\FlarumFeeds\Controller\LastDiscussionsByTagFeedController');
-            $event->get('/t/{tag}/discussions/atom', 'feeds.atom.tag', 'AmauryCarrade\FlarumFeeds\Controller\LastDiscussionsByTagFeedController');
+            $event->get('/rss/t/{tag}/d', 'feeds.rss.tag_discussions', 'AmauryCarrade\FlarumFeeds\Controller\LastDiscussionsByTagFeedController');
+            $event->get('/atom/t/{tag}/d', 'feeds.atom.tag_discussions', 'AmauryCarrade\FlarumFeeds\Controller\LastDiscussionsByTagFeedController');
         }
 	}
 }
