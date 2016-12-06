@@ -46,6 +46,8 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Displays feeds for topics, either last updated or created, possibly filtered by tag.
+ * This is the main controller for feeds listing discussions; other extends this one with
+ * specific parameters.
  *
  * @package AmauryCarrade\FlarumFeeds\Controller
  */
@@ -144,10 +146,38 @@ class DiscussionsActivityFeedController extends AbstractFeedController
             ];
         }
 
+        // TODO real tag names
+        if ($this->lastTopics)
+        {
+            if (empty($tags))
+            {
+                $title = $this->translator->trans('amaurycarrade-syndication.forum.feeds.titles.main_d_title', ['{forum_name}' => $forum->attributes->title, '{forum_desc}' => $forum->attributes->description]);
+                $description = $this->translator->trans('amaurycarrade-syndication.forum.feeds.titles.main_d_subtitle', ['{forum_name}' => $forum->attributes->title, '{forum_desc}' => $forum->attributes->description]);
+            }
+            else
+            {
+                $title = $this->translator->trans('amaurycarrade-syndication.forum.feeds.titles.tag_d_title', ['{forum_name}' => $forum->attributes->title, '{forum_desc}' => $forum->attributes->description, '{tag}' => implode(', ', $tags)]);
+                $description = $this->translator->trans('amaurycarrade-syndication.forum.feeds.titles.tag_d_subtitle', ['{forum_name}' => $forum->attributes->title, '{forum_desc}' => $forum->attributes->description, '{tag}' => implode(', ', $tags)]);
+            }
+        }
+        else
+        {
+            if (empty($tags))
+            {
+                $title = $this->translator->trans('amaurycarrade-syndication.forum.feeds.titles.main_title', ['{forum_name}' => $forum->attributes->title, '{forum_desc}' => $forum->attributes->description]);
+                $description = $this->translator->trans('amaurycarrade-syndication.forum.feeds.titles.main_subtitle', ['{forum_name}' => $forum->attributes->title, '{forum_desc}' => $forum->attributes->description]);
+            }
+            else
+            {
+                $title = $this->translator->trans('amaurycarrade-syndication.forum.feeds.titles.tag_title', ['{forum_name}' => $forum->attributes->title, '{forum_desc}' => $forum->attributes->description, '{tag}' => implode(', ', $tags)]);
+                $description = $this->translator->trans('amaurycarrade-syndication.forum.feeds.titles.tag_subtitle', ['{forum_name}' => $forum->attributes->title, '{forum_desc}' => $forum->attributes->description, '{tag}' => implode(', ', $tags)]);
+            }
+        }
+
         return [
             'forum'       => $forum,
-            'title'       => $forum->attributes->title,
-            'description' => $forum->attributes->description,
+            'title'       => $title,
+            'description' => $description,
             'link'        => $forum->attributes->baseUrl,
             'pubDate'     => new \DateTime(),
             'entries'     => $entries

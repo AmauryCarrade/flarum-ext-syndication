@@ -37,37 +37,67 @@
 
 namespace AmauryCarrade\FlarumFeeds\Listener;
 
+use DirectoryIterator;
 use Illuminate\Contracts\Events\Dispatcher;
+use Flarum\Event\ConfigureLocales;
 use Flarum\Event\ConfigureWebApp;
+use Symfony\Component\Translation\TranslatorInterface;
 
 
 class AddClientAssetsAndLinks
 {
+    /**
+     * @var TranslatorInterface
+     */
+    private $translator;
+
     public function subscribe(Dispatcher $events)
     {
+        $this->translator = app('translator');
+
         $events->listen(ConfigureWebApp::class, [$this, 'addFeedLinks']);
+        $events->listen(ConfigureLocales::class, [$this, 'addLocales']);
+
+    }
+
+    public function addLocales(ConfigureLocales $event)
+    {
+        foreach (new DirectoryIterator(__DIR__.'/../../locale') as $file)
+        {
+            if ($file->isFile() && in_array($file->getExtension(), ['yml', 'yaml']))
+            {
+                $event->locales->addTranslations($file->getBasename('.'.$file->getExtension()), $file->getPathname());
+            }
+        }
     }
 
     public function addFeedLinks(ConfigureWebApp $event)
     {
+        //var_dump($this->translator);
+
         if ($event->isForum())
         {
-            $this->addAtomFeed($event, 'atom', 'Forum activity');
-            $this->addAtomFeed($event, 'atom/d', 'Forum new discussions');
+            $this->addAtomFeed($event, 'atom', $this->translator->trans('amaurycarrade-syndication.forum.autodiscovery.forum_activity'));
+            $this->addAtomFeed($event, 'atom/d', $this->translator->trans('amaurycarrade-syndication.forum.autodiscovery.forum_new_discussions'));
 
             $path = $_SERVER['PATH_INFO'];
 
             // TODO use reverse routing
-            if (starts_with($path, '/t/'))
+            if (class_exists('Flarum\Tags\Tag') && starts_with($path, '/t/'))
             {
                 // TODO use real tag name
-                $this->addAtomFeed($event, 'atom' . $path, 'Activity for ' . str_replace('/t/', '', $path) . ' tag');
-                $this->addAtomFeed($event, 'atom' . $path . '/d', 'Discussions in the ' . str_replace('/t/', '', $path) . ' tag');
+                $tag_name = str_replace('/t/', '', $path);
+
+                $this->addAtomFeed($event, 'atom' . $path, $this->translator->trans('amaurycarrade-syndication.forum.autodiscovery.tag_activity', ['{tag}' => $tag_name]));
+                $this->addAtomFeed($event, 'atom' . $path . '/d', $this->translator->trans('amaurycarrade-syndication.forum.autodiscovery.tag_new_discussions', ['{tag}' => $tag_name]));
             }
             else if (starts_with($path, '/d/'))
             {
+                // Removes the post number (if any). Reverse routing would be better.
+                $path_parts = explode('/', $path);
+
                 // TODO add discussion name?
-                $this->addAtomFeed($event, 'atom' . $path, 'Last posts in this discussion');
+                $this->addAtomFeed($event, 'atom/d/' . $path_parts[2], $this->translator->trans('amaurycarrade-syndication.forum.autodiscovery.discussion_last_posts'));
             }
         }
     }

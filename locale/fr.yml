@@ -1,0 +1,20 @@
+amaurycarrade-syndication:
+  forum:
+    autodiscovery:
+      forum_activity: "Activité du forum"
+      forum_new_discussions: "Nouvelles discussions"
+      tag_activity: "Activité de l'étiquette {tag}"
+      tag_new_discussions: "Discussions dans {tag}"
+      discussion_last_posts: "Cette discussion"
+    feeds:
+      titles:
+        main_title: "{forum_name}"
+        main_subtitle: "Derniers messages du forum"
+        main_d_title: "Derniers sujets dans {forum_name}"
+        main_d_subtitle: "Tous les nouveaux sujets du forum"
+        tag_title: "Activité de l'étiquette {tag}"
+        tag_subtitle: "Derniers messages dans l'étiquette {tag}"
+        tag_d_title: "Derniers sujets de l'étiquette {tag}"
+        tag_d_subtitle: "Tous les nouveaux sujets de l'étiquette {tag}"
+        discussion_title: "{discussion_name}"
+        discussion_subtitle: "Derniers messages dans cette discussion"

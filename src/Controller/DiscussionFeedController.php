@@ -105,8 +105,8 @@ class DiscussionFeedController extends AbstractFeedController
         }
 
         return [
-            'title'       => $discussion->attributes->title,
-            'description' => '',
+            'title'       => $this->translator->trans('amaurycarrade-syndication.forum.feeds.titles.discussion_title', ['{discussion_name}' => $discussion->attributes->title]),
+            'description' => $this->translator->trans('amaurycarrade-syndication.forum.feeds.titles.discussion_subtitle', ['{discussion_name}' => $discussion->attributes->title]),
             'link'        => $this->url->toRoute('discussion', ['id' => $discussion->id . '-' . $discussion->attributes->slug]),
             'pubDate'     => new \DateTime(),
             'entries'     => $entries
