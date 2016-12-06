@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
+{{-- Some silly PHP interpreter will try to interpret code between <?xml and ?> --}}
+{!! '<?xml version="1.0" encoding="utf-8"?>' !!}
 
 <feed xmlns="http://www.w3.org/2005/Atom">
 
