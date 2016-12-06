@@ -8,6 +8,11 @@ use Illuminate\Contracts\View\Factory;
 use Symfony\Component\Translation\TranslatorInterface;
 
 
+/**
+ * Displays a feed containing the last discussions with activity in a given tag.
+ *
+ * @package AmauryCarrade\FlarumFeeds\Controller
+ */
 class TagsFeedController extends DiscussionsActivityFeedController
 {
     public function __construct(Factory $view, ApiClient $api, TranslatorInterface $translator, $lastTopics = false)

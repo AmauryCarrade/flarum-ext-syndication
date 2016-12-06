@@ -14,6 +14,11 @@ use Symfony\Component\Translation\TranslatorInterface;
 use Zend\Diactoros\Response;
 
 
+/**
+ * Abstract feed displayer
+ *
+ * @package AmauryCarrade\FlarumFeeds\Controller
+ */
 abstract class AbstractFeedController implements ControllerInterface
 {
     /**

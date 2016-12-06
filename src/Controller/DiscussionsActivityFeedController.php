@@ -13,7 +13,6 @@ use Symfony\Component\Translation\TranslatorInterface;
  * Displays feeds for topics, either last updated or created, possibly filtered by tag.
  *
  * @package AmauryCarrade\FlarumFeeds\Controller
- * @see AmauryCarrade\FlarumFeeds\Controller\LastDiscussionsFeedController Controller for last created discussions
  */
 class DiscussionsActivityFeedController extends AbstractFeedController
 {
@@ -28,6 +27,7 @@ class DiscussionsActivityFeedController extends AbstractFeedController
         'newest' => '-startTime',
         'oldest' => 'startTime'
     ];
+
     /**
      * @var bool true to display topics ordered by creation date with first post instead of activity
      */
@@ -102,7 +102,8 @@ class DiscussionsActivityFeedController extends AbstractFeedController
                 'title'       => $discussion->attributes->title,
                 'description' => $this->summary($content->contentHtml),
                 'content'     => $content->contentHtml,
-                'permalink'   => $this->url->toRoute('discussion', ['id' => $discussion->id . '-' . $discussion->attributes->slug]),
+                'id'          => $this->url->toRoute('discussion', ['id' => $discussion->id . '-' . $discussion->attributes->slug]),
+                'permalink'   => $this->url->toRoute('discussion', ['id' => $discussion->id . '-' . $discussion->attributes->slug, 'near' => $content->number]) . '/' . $content->number,  // TODO same than DiscussionFeedController
                 'pubdate'     => $this->parseDate($this->lastTopics ? $discussion->attributes->startTime : $discussion->attributes->lastTime),
                 'author'      => $this->getRelationship($last_discussions, $this->lastTopics ? $discussion->relationships->startUser : $discussion->relationships->lastUser)->username
             ];

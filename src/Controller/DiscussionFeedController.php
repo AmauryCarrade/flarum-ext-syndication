@@ -9,6 +9,12 @@ use Illuminate\Contracts\View\Factory;
 use Symfony\Component\Translation\TranslatorInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
+
+/**
+ * Displays feed for a given topic.
+ *
+ * @package AmauryCarrade\FlarumFeeds\Controller
+ */
 class DiscussionFeedController extends AbstractFeedController
 {
     public function __construct(Factory $view, ApiClient $api, TranslatorInterface $translator)
