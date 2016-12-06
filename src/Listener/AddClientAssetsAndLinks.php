@@ -73,14 +73,12 @@ class AddClientAssetsAndLinks
 
     public function addFeedLinks(ConfigureWebApp $event)
     {
-        //var_dump($this->translator);
-
         if ($event->isForum())
         {
             $this->addAtomFeed($event, 'atom', $this->translator->trans('amaurycarrade-syndication.forum.autodiscovery.forum_activity'));
             $this->addAtomFeed($event, 'atom/d', $this->translator->trans('amaurycarrade-syndication.forum.autodiscovery.forum_new_discussions'));
 
-            $path = $_SERVER['PATH_INFO'];
+            $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
             // TODO use reverse routing
             if (class_exists('Flarum\Tags\Tag') && starts_with($path, '/t/'))
