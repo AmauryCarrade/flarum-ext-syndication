@@ -8,11 +8,10 @@
     },
     "extra": {
         "flarum-extension": {
-            "title": "RSS / Atom feeds",
+            "title": "Syndication",
             "icon": {
                 "name": "rss",
                 "backgroundColor": "#e28f12",
-                "backgroundSize": "100%",
                 "backgroundRepeat": "no-repeat",
                 "backgroundPosition": "center",
                 "color": "#fff"
