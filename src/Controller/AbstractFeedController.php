@@ -118,7 +118,7 @@ abstract class AbstractFeedController implements ControllerInterface
         $response = new Response;
         $response->getBody()->write($this->view->make('flarum-feeds::' . $feed_type, $feed_content));
 
-        return $response->withHeader('Content-Type', $this->content_types[$feed_type] . '; encoding=utf8');
+        return $response->withHeader('Content-Type', $this->content_types[$feed_type] . '; charset=utf8');
     }
 
     /**
