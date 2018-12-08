@@ -38,7 +38,7 @@
 namespace AmauryCarrade\FlarumFeeds\Controller;
 
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Flarum\Core\User;
+use Flarum\User\User;
 use Flarum\Api\Client as ApiClient;
 use Illuminate\Contracts\View\Factory;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -59,10 +59,10 @@ class DiscussionsActivityFeedController extends AbstractFeedController
      * @var array
      */
     private $sortMap = [
-        'latest' => '-lastTime',
-        'top' => '-commentsCount',
-        'newest' => '-startTime',
-        'oldest' => 'startTime'
+        'latest' => '-lastPostedAt',
+        'top' => '-commentCount',
+        'newest' => '-createdAt',
+        'oldest' => 'createdAt'
     ];
 
     /**
@@ -108,7 +108,7 @@ class DiscussionsActivityFeedController extends AbstractFeedController
             'sort' => $sort && isset($this->sortMap[$sort]) ? $this->sortMap[$sort] : ($this->lastTopics ? $this->sortMap['newest'] : $this->sortMap['latest']),
             'filter' => compact('q'),
             'page' => ['offset' => 0, 'limit' => 20],
-            'include' => $this->lastTopics ? 'startPost,startUser' : 'lastPost,lastUser'
+            'include' => $this->lastTopics ? 'firstPost,user' : 'lastPost,lastPostedUser'
         ];
 
         $actor = $this->getActor($request);
@@ -121,9 +121,9 @@ class DiscussionsActivityFeedController extends AbstractFeedController
         {
             if ($discussion->type != 'discussions') continue;
 
-            if ($this->lastTopics && isset($discussion->relationships->startPost))
+            if ($this->lastTopics && isset($discussion->relationships->firstPost))
             {
-                $content = $this->getRelationship($last_discussions, $discussion->relationships->startPost);
+                $content = $this->getRelationship($last_discussions, $discussion->relationships->firstPost);
             }
             else if (isset($discussion->relationships->lastPost))
             {
@@ -139,10 +139,10 @@ class DiscussionsActivityFeedController extends AbstractFeedController
                 'title'       => $discussion->attributes->title,
                 'description' => $this->summary($content->contentHtml),
                 'content'     => $content->contentHtml,
-                'id'          => $this->url->toRoute('discussion', ['id' => $discussion->id . '-' . $discussion->attributes->slug]),
-                'permalink'   => $this->url->toRoute('discussion', ['id' => $discussion->id . '-' . $discussion->attributes->slug, 'near' => $content->number]) . '/' . $content->number,  // TODO same than DiscussionFeedController
-                'pubdate'     => $this->parseDate($this->lastTopics ? $discussion->attributes->startTime : $discussion->attributes->lastTime),
-                'author'      => $this->getRelationship($last_discussions, $this->lastTopics ? $discussion->relationships->startUser : $discussion->relationships->lastUser)->username
+                'id'          => $this->url->to('forum')->route('discussion', ['id' => $discussion->id . '-' . $discussion->attributes->slug]),
+                'permalink'   => $this->url->to('forum')->route('discussion', ['id' => $discussion->id . '-' . $discussion->attributes->slug, 'near' => $content->number]) . '/' . $content->number,  // TODO same than DiscussionFeedController
+                'pubdate'     => $this->parseDate($this->lastTopics ? $discussion->attributes->createdAt : $discussion->attributes->lastPostedAt),
+                'author'      => $this->getRelationship($last_discussions, $this->lastTopics ? $discussion->relationships->user : $discussion->relationships->lastPostedUser)->username
             ];
         }
 

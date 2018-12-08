@@ -38,7 +38,7 @@
 namespace AmauryCarrade\FlarumFeeds\Controller;
 
 use Flarum\Api\Client as ApiClient;
-use Flarum\Core\User;
+use Flarum\User\User;
 use Flarum\Http\Exception\RouteNotFoundException;
 use Illuminate\Contracts\View\Factory;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -84,7 +84,7 @@ class DiscussionFeedController extends AbstractFeedController
                 'offset' => 0,
                 'limit' => 20
             ],
-            'sort' => '-time'
+            'sort' => '-createdAt'
         ]);
 
         $entries = [];
@@ -98,8 +98,8 @@ class DiscussionFeedController extends AbstractFeedController
                 'title'       => $discussion->attributes->title,
                 'description' => $this->summary($post->attributes->contentHtml),
                 'content'     => $post->attributes->contentHtml,
-                'permalink'   => $this->url->toRoute('discussion', ['id' => $discussion->id . '-' . $discussion->attributes->slug, 'near' => $post->attributes->number]) . '/' . $post->attributes->number, // TODO check out why the near parameter refuses to work
-                'pubdate'     => $this->parseDate($post->attributes->time),
+                'permalink'   => $this->url->to('forum')->route('discussion', ['id' => $discussion->id . '-' . $discussion->attributes->slug, 'near' => $post->attributes->number]) . '/' . $post->attributes->number, // TODO check out why the near parameter refuses to work
+                'pubdate'     => $this->parseDate($post->attributes->createdAt),
                 'author'      => $this->getRelationship($posts, $post->relationships->user)->username
             ];
         }
@@ -107,7 +107,7 @@ class DiscussionFeedController extends AbstractFeedController
         return [
             'title'       => $this->translator->trans('amaurycarrade-syndication.forum.feeds.titles.discussion_title', ['{discussion_name}' => $discussion->attributes->title]),
             'description' => $this->translator->trans('amaurycarrade-syndication.forum.feeds.titles.discussion_subtitle', ['{discussion_name}' => $discussion->attributes->title]),
-            'link'        => $this->url->toRoute('discussion', ['id' => $discussion->id . '-' . $discussion->attributes->slug]),
+            'link'        => $this->url->to('forum')->route('discussion', ['id' => $discussion->id . '-' . $discussion->attributes->slug]),
             'pubDate'     => new \DateTime(),
             'entries'     => $entries
         ];

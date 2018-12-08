@@ -40,11 +40,13 @@ namespace AmauryCarrade\FlarumFeeds\Controller;
 use DateTime;
 use Flarum\Http\Exception\RouteNotFoundException;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Flarum\Core\User;
-use Flarum\Forum\UrlGenerator;
-use Flarum\Http\Controller\ControllerInterface;
+use Flarum\User\User;
+use Flarum\Http\UrlGenerator;
 use Flarum\Api\Client as ApiClient;
 use Illuminate\Contracts\View\Factory;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 use Zend\Diactoros\Response;
 
@@ -54,7 +56,7 @@ use Zend\Diactoros\Response;
  *
  * @package AmauryCarrade\FlarumFeeds\Controller
  */
-abstract class AbstractFeedController implements ControllerInterface
+abstract class AbstractFeedController implements RequestHandlerInterface
 {
     /**
      * @var ApiClient
@@ -98,14 +100,14 @@ abstract class AbstractFeedController implements ControllerInterface
         $this->api = $api;
         $this->translator = $translator;
 
-        $this->url = app('Flarum\Forum\UrlGenerator');
+        $this->url = app('Flarum\Http\UrlGenerator');
     }
 
     /**
-     * @param Request $request
-     * @return \Zend\Diactoros\Response
+     * @param ServerRequestInterface $request
+     * @return ResponseInterface
      */
-    public function handle(Request $request)
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $feed_type = $this->getFeedType($request);
         $feed_type = in_array($feed_type, ['rss', 'atom']) ? $feed_type : 'rss';
@@ -122,10 +124,10 @@ abstract class AbstractFeedController implements ControllerInterface
     }
 
     /**
-     * @param Request $request A request.
+     * @param ServerRequestInterface $request A request.
      * @return User The actor for this request.
      */
-    protected function getActor(Request $request)
+    protected function getActor(ServerRequestInterface $request)
     {
         return $request->getAttribute('actor');
     }
@@ -207,16 +209,16 @@ abstract class AbstractFeedController implements ControllerInterface
     }
 
     /**
-     * @param Request $request
+     * @param ServerRequestInterface $request
      * @return array
      */
-    abstract protected function getFeedContent(Request $request);
+    abstract protected function getFeedContent(ServerRequestInterface $request);
 
     /**
-     * @param Request $request The request
+     * @param ServerRequestInterface $request The request
      * @return string 'rss' or 'atom', defaults to 'rss'.
      */
-    protected function getFeedType(Request $request)
+    protected function getFeedType(ServerRequestInterface $request)
     {
         $path = strtolower($request->getUri()->getPath());
         return starts_with($path, '/atom') ? 'atom' : 'rss';

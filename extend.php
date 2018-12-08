@@ -35,15 +35,18 @@
  * knowledge of the CeCILL-B license and that you accept its terms.
  */
 
+use Flarum\Extend;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\View\Factory;
-
 use AmauryCarrade\FlarumFeeds\Listener;
 
-return function (Dispatcher $events, Factory $views)
-{
-    $events->subscribe(Listener\AddFeedsRoutes::class);
-    $events->subscribe(Listener\AddClientAssetsAndLinks::class);
-
-    $views->addNamespace('flarum-feeds', __DIR__.'/views');
-};
+return [
+    new Extend\Locales(__DIR__ . '/resources/locale'),
+    new Extend\Compat(function (Dispatcher $events) {
+        $events->subscribe(Listener\AddFeedsRoutes::class);
+    }),
+    (new Extend\Frontend('forum'))->content(Listener\AddClientLinks::class),
+    function (Factory $views) {
+        $views->addNamespace('flarum-feeds', __DIR__.'/views');
+    },
+];
