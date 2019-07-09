@@ -1,0 +1,20 @@
+amaurycarrade-syndication:
+  forum:
+    autodiscovery:
+      forum_activity: "Forum etkinliği"
+      forum_new_discussions: "Forumdaki yeni tartışmalar"
+      tag_activity: "{tag} etiketi için etkinlikler"
+      tag_new_discussions: "{tag} etiketindeki tartışmalar"
+      discussion_last_posts: "Bu tartışma"
+    feeds:
+      titles:
+        main_title: "{forum_name}"
+        main_subtitle: "Forumdaki son gönderiler"
+        main_d_title: "{forum_name} için yeni tartışmalar"
+        main_d_subtitle: "Forumdaki en yeni tartışmalar"
+        tag_title: "{tag} etiketindeki etkinlikler"
+        tag_subtitle: "{tag} etiketindeki son gönderiler"
+        tag_d_title: "{tag} etiketindeki son tartışmalar"
+        tag_d_subtitle: "{tag} etkiketindeki en yeni tartışma"
+        discussion_title: "{discussion_name}"
+        discussion_subtitle: "Bu konudaki son yazılar"
