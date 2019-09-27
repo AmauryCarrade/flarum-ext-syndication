@@ -13,9 +13,7 @@
         <item>
             <title><![CDATA[{!! $entry['title'] !!}]]></title>
             <description><![CDATA[{!! $entry['description'] !!}]]></description>
-            <content:encoded><![CDATA[{!! $entry['content'] or $entry['description'] !!}]]></content:encoded>
-            <link>{{ $entry['permalink'] }}</link>
-            <guid isPermaLink="{{ !isset($entry['id']) }}">{{ $entry['id'] or $entry['permalink'] }}</guid>
+            <guid>{{ $entry['permalink'] }}</guid>
             <pubDate>{{ $entry['pubdate']->format(DateTime::RSS) }}</pubDate>
         </item>
         @endforeach
