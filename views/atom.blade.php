@@ -4,7 +4,7 @@
 
     <title><![CDATA[{!! $title !!}]]></title>
     <subtitle><![CDATA[{!! $description !!}]]></subtitle>
-    <link href="{{ $self_link }}/" rel="self" />
+    <link href="{{ $self_link }}" rel="self" />
     <link href="{{ $link }}/" />
     <id><![CDATA[{!! $link !!}/]]></id>
     <updated>{{ $pubDate->format(DateTime::ATOM) }}</updated>
