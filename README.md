@@ -20,4 +20,4 @@ This extension adds the following feeds to Flarum:
 
 You can replace `atom` by `rss` in the URLs above to get RSS feeds instead. The tags-related feeds are only available if the tags extension is installed and enabled.
 
-The difference between this fork and the original is that this fork has tweaked a couple things to ensure the feeds validate.
+Feeds are linked in the pages for autodiscovery and listing in the browser (at least in Firefox, as Chrome, Vivaldi, and a lot of others doesn't support syndication feeds out of the box). This said, they are not dynamically updated as the page change (except when fully reloaded), becuse of this [Firefox bug](https://bugzilla.mozilla.org/show_bug.cgi?id=380639). If a workaround is found, they will be.
