@@ -12,7 +12,7 @@
         @foreach ($entries as $entry)
         <item>
             <title><![CDATA[{!! $entry['title'] !!}]]></title>
-            <description><![CDATA[{!! $entry['content'] !!}]]></description>
+            <description><![CDATA[{!! $entry['description'] !!}]]></description>
             <guid>{{ $entry['permalink'] }}</guid>
             <pubDate>{{ $entry['pubdate']->format(DateTime::RSS) }}</pubDate>
         </item>
