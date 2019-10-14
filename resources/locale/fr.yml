@@ -18,3 +18,21 @@ amaurycarrade-syndication:
         tag_d_subtitle: "Tous les nouveaux sujets de l'étiquette {tag}"
         discussion_title: "{discussion_name}"
         discussion_subtitle: "Derniers messages dans cette discussion"
+  admin:
+    settings:
+      title: "Paramètres des flux RSS & Atom"
+      full-text:
+        label: "Textes complets dans les flux"
+        help: |
+          Si désactivé, les flux RSS et Atom contiendront un extrait des messages,
+          et non le texte complet ; les utilisateurs devront aller sur le forum pour
+          lire l'intégralité.
+        recommendation: |
+          Je recommanderais de laisser cette option active, afin de respecter les
+          utilisateurs lisant le forum depuis un aggrégateur RSS — s'il y en a.
+      html:
+        label: "Textes formatés dans les flux"
+        help: |
+          Cochez ceci pour conserver le HTML dans les flux RSS et Atom. Si décoché,
+          ils ne contiendront que du texte brut.
+      entries-count: "Combien d'entrées par flux ?"

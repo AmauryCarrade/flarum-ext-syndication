@@ -15,7 +15,10 @@
         <link rel="alternate" type="text/html" href="{{ $entry['permalink'] }}"/>
         <id>{{ $entry['permalink'] }}</id>
         <updated>{{ $entry['pubdate']->format(DateTime::ATOM) }}</updated>
-        <content type="html"><![CDATA[{!! $entry['content'] !!}]]></content>
+        <content
+        @if ($html)
+            type="html"
+        @endif><![CDATA[{!! $entry['content'] !!}]]></content>
         <author>
             <name>{{ $entry['author'] }}</name>
         </author>

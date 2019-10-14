@@ -38,6 +38,7 @@
 namespace AmauryCarrade\FlarumFeeds\Controller;
 
 use Flarum\Api\Client as ApiClient;
+use Flarum\Settings\SettingsRepositoryInterface;
 use Flarum\User\User;
 use Flarum\Http\Exception\RouteNotFoundException;
 use Illuminate\Contracts\View\Factory;
@@ -52,9 +53,9 @@ use Psr\Http\Message\ServerRequestInterface as Request;
  */
 class DiscussionFeedController extends AbstractFeedController
 {
-    public function __construct(Factory $view, ApiClient $api, TranslatorInterface $translator)
+    public function __construct(Factory $view, ApiClient $api, TranslatorInterface $translator, SettingsRepositoryInterface $settings)
     {
-        parent::__construct($view, $api, $translator);
+        parent::__construct($view, $api, $translator, $settings);
     }
 
     /**
@@ -82,7 +83,7 @@ class DiscussionFeedController extends AbstractFeedController
             ],
             'page' => [
                 'offset' => 0,
-                'limit' => 20
+                'limit' => $this->getSetting("entries-count", 100)
             ],
             'sort' => '-createdAt'
         ]);
@@ -96,8 +97,7 @@ class DiscussionFeedController extends AbstractFeedController
 
             $entries[] = [
                 'title'       => $discussion->attributes->title,
-                'description' => $this->summary($post->attributes->contentHtml),
-                'content'     => $post->attributes->contentHtml,
+                'content'     => $this->summarize($this->stripHTML($post->attributes->contentHtml)),
                 'permalink'   => $this->url->to('forum')->route('discussion', ['id' => $discussion->id . '-' . $discussion->attributes->slug, 'near' => $post->attributes->number]) . '/' . $post->attributes->number, // TODO check out why the near parameter refuses to work
                 'pubdate'     => $this->parseDate($post->attributes->createdAt),
                 'author'      => $this->getRelationship($posts, $post->relationships->user)->username

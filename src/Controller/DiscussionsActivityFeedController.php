@@ -37,6 +37,7 @@
 
 namespace AmauryCarrade\FlarumFeeds\Controller;
 
+use Flarum\Settings\SettingsRepositoryInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Flarum\User\User;
 use Flarum\Api\Client as ApiClient;
@@ -76,9 +77,9 @@ class DiscussionsActivityFeedController extends AbstractFeedController
      * @param TranslatorInterface $translator
      * @param bool                $lastTopics
      */
-    public function __construct(Factory $view, ApiClient $api, TranslatorInterface $translator, $lastTopics = false)
+    public function __construct(Factory $view, ApiClient $api, TranslatorInterface $translator, SettingsRepositoryInterface $settings, $lastTopics = false)
     {
-        parent::__construct($view, $api, $translator);
+        parent::__construct($view, $api, $translator, $settings);
 
         $this->lastTopics = $lastTopics;
     }
@@ -107,7 +108,7 @@ class DiscussionsActivityFeedController extends AbstractFeedController
         $params = [
             'sort' => $sort && isset($this->sortMap[$sort]) ? $this->sortMap[$sort] : ($this->lastTopics ? $this->sortMap['newest'] : $this->sortMap['latest']),
             'filter' => compact('q'),
-            'page' => ['offset' => 0, 'limit' => 20],
+            'page' => ['offset' => 0, 'limit' => $this->getSetting("entries-count", 100)],
             'include' => $this->lastTopics ? 'firstPost,user' : 'lastPost,lastPostedUser'
         ];
 
@@ -137,8 +138,7 @@ class DiscussionsActivityFeedController extends AbstractFeedController
 
             $entries[] = [
                 'title'       => $discussion->attributes->title,
-                'description' => $this->summary($content->contentHtml),
-                'content'     => $content->contentHtml,
+                'content'     => $this->summarize($this->stripHTML($content->contentHtml)),
                 'id'          => $this->url->to('forum')->route('discussion', ['id' => $discussion->id . '-' . $discussion->attributes->slug]),
                 'permalink'   => $this->url->to('forum')->route('discussion', ['id' => $discussion->id . '-' . $discussion->attributes->slug, 'near' => $content->number]) . '/' . $content->number,  // TODO same than DiscussionFeedController
                 'pubdate'     => $this->parseDate($this->lastTopics ? $discussion->attributes->createdAt : $discussion->attributes->lastPostedAt),

@@ -17,4 +17,19 @@ amaurycarrade-syndication:
         tag_d_title: "New discussions in the {tag} tag"
         tag_d_subtitle: "The newest discussions in the {tag} tag"
         discussion_title: "{discussion_name}"
-        discussion_subtitle: "Derniers messages dans cette discussion"
+        discussion_subtitle: "Last messages in this discussion"
+  admin:
+    settings:
+      title: "Syndication Settings"
+      full-text:
+        label: "Full-Text Feeds"
+        help: |
+          If disabled, the feeds will only contain an extract of the posts,
+          and users will have to go to the forum to read everything.
+        recommendation: |
+          I would recommend to leave this option active in order to respect
+          the people following the forum from an RSS aggregator—if any.
+      html:
+        label: "Formatted Feeds"
+        help: "Check this to keep the HTML in the generated feeds. If disabled, the feeds will be in plain text."
+      entries-count: "How many entries per feed?"

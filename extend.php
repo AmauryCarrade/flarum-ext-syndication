@@ -42,6 +42,9 @@ use AmauryCarrade\FlarumFeeds\Listener;
 
 return [
     new Extend\Locales(__DIR__ . '/resources/locale'),
+    (new Extend\Frontend('admin'))
+        ->js(__DIR__.'/js/dist/admin.js')
+        ->css(__DIR__.'/resources/less/admin.less'),
     new Extend\Compat(function (Dispatcher $events) {
         $events->subscribe(Listener\AddFeedsRoutes::class);
     }),
