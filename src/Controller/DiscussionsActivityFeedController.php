@@ -117,6 +117,7 @@ class DiscussionsActivityFeedController extends AbstractFeedController
         $last_discussions = $this->getDocument($actor, $params);
 
         $entries = [];
+        $lastModified = null;
 
         foreach ($last_discussions->data as $discussion)
         {
@@ -130,7 +131,7 @@ class DiscussionsActivityFeedController extends AbstractFeedController
             {
                 $content = $this->getRelationship($last_discussions, $discussion->relationships->lastPost);
             }
-            else  // Happens when the first or last post is (soft-)deleted
+            else  // Happens when the first or last post is soft-deleted
             {
                 $content = new \stdClass();
                 $content->contentHtml = '';
@@ -144,6 +145,13 @@ class DiscussionsActivityFeedController extends AbstractFeedController
                 'pubdate'     => $this->parseDate($this->lastTopics ? $discussion->attributes->createdAt : $discussion->attributes->lastPostedAt),
                 'author'      => $this->getRelationship($last_discussions, $this->lastTopics ? $discussion->relationships->user : $discussion->relationships->lastPostedUser)->username
             ];
+
+            $modified = $this->parseDate($this->lastTopics ? $discussion->attributes->createdAt : $discussion->attributes->lastPostedAt);
+
+            if ($lastModified === null || $lastModified < $modified)
+            {
+                $lastModified = $modified;
+            }
         }
 
         // TODO real tag names
@@ -175,12 +183,13 @@ class DiscussionsActivityFeedController extends AbstractFeedController
         }
 
         return [
-            'forum'       => $forum,
-            'title'       => $title,
-            'description' => $description,
-            'link'        => $forum->attributes->baseUrl,
-            'pubDate'     => new \DateTime(),
-            'entries'     => $entries
+            'forum'        => $forum,
+            'title'        => $title,
+            'description'  => $description,
+            'link'         => $forum->attributes->baseUrl,
+            'pubDate'      => new \DateTime(),
+            'lastModified' => $lastModified,
+            'entries'      => $entries
         ];
     }
 

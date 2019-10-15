@@ -129,6 +129,17 @@ abstract class AbstractFeedController implements RequestHandlerInterface
         $response = new Response;
         $response->getBody()->write($this->view->make('flarum-feeds::' . $feed_type, $feed_content));
 
+        /**
+         * @var DateTime $lastModified
+         */
+        $lastModified = $feed_content['lastModified'];
+
+        if ($lastModified != null)
+        {
+            $lastModified->setTimezone(new \DateTimeZone("UTC"));
+            $response = $response->withHeader("Last-Modified", $lastModified->format('D, d M Y H:i:s \G\M\T'));
+        }
+
         return $response->withHeader('Content-Type', $this->content_types[$feed_type] . '; charset=utf8');
     }
 

@@ -89,6 +89,7 @@ class DiscussionFeedController extends AbstractFeedController
         ]);
 
         $entries = [];
+        $lastModified = null;
 
         foreach ($posts->data as $post)
         {
@@ -102,14 +103,22 @@ class DiscussionFeedController extends AbstractFeedController
                 'pubdate'     => $this->parseDate($post->attributes->createdAt),
                 'author'      => $this->getRelationship($posts, $post->relationships->user)->username
             ];
+
+            $modified = $this->parseDate($post->attributes->editedAt || $post->attributes->createdAt);
+
+            if ($lastModified === null || $lastModified < $modified)
+            {
+                $lastModified = $modified;
+            }
         }
 
         return [
-            'title'       => $this->translator->trans('amaurycarrade-syndication.forum.feeds.titles.discussion_title', ['{discussion_name}' => $discussion->attributes->title]),
-            'description' => $this->translator->trans('amaurycarrade-syndication.forum.feeds.titles.discussion_subtitle', ['{discussion_name}' => $discussion->attributes->title]),
-            'link'        => $this->url->to('forum')->route('discussion', ['id' => $discussion->id . '-' . $discussion->attributes->slug]),
-            'pubDate'     => new \DateTime(),
-            'entries'     => $entries
+            'title'        => $this->translator->trans('amaurycarrade-syndication.forum.feeds.titles.discussion_title', ['{discussion_name}' => $discussion->attributes->title]),
+            'description'  => $this->translator->trans('amaurycarrade-syndication.forum.feeds.titles.discussion_subtitle', ['{discussion_name}' => $discussion->attributes->title]),
+            'link'         => $this->url->to('forum')->route('discussion', ['id' => $discussion->id . '-' . $discussion->attributes->slug]),
+            'pubDate'      => new \DateTime(),
+            'lastModified' => $lastModified,
+            'entries'      => $entries
         ];
     }
 
