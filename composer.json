@@ -3,8 +3,18 @@
     "description": "Brings RSS and Atom feeds to Flarum",
     "license": "CECILL-B",
     "type": "flarum-extension",
+    "keywords": [
+        "flarum"
+    ],
+    "authors": [
+        {
+            "name": "Amaury Carrade",
+            "email": "amaury@carrade.eu",
+            "role": "Developer"
+        }
+    ],
     "require": {
-        "flarum/core": "^0.1.0-beta.8"
+        "flarum/core": "^0.1.0-beta.10"
     },
     "extra": {
         "flarum-extension": {
@@ -16,6 +26,9 @@
                 "backgroundPosition": "center",
                 "color": "#fff"
             }
+        },
+        "flagrow": {
+            "discuss": "https://discuss.flarum.org/d/4395-syndication-extension-rss-atom-feeds"
         }
     },
     "autoload": {
