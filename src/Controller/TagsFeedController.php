@@ -41,8 +41,6 @@ use Flarum\Extension\ExtensionManager;
 use Flarum\Http\Exception\RouteNotFoundException;
 use Flarum\Settings\SettingsRepositoryInterface;
 use Flarum\Tags\TagRepository;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Intervention\Image\Exception\NotFoundException;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Flarum\Api\Client as ApiClient;
 use Illuminate\Contracts\View\Factory;
