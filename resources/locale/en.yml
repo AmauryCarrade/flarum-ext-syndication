@@ -23,10 +23,10 @@ amaurycarrade-syndication:
       title: "Syndication Settings"
       full-text:
         label: "Full-Text Feeds"
-        help: |
-          If disabled, the feeds will only contain an extract of the posts,
+        help: >-
+          If disabled, feeds will only contain excerpts of posts,
           and users will have to go to the forum to read everything.
-        recommendation: |
+        recommendation: >-
           I would recommend to leave this option active in order to respect
           the people following the forum from an RSS aggregator—if any.
       html:
