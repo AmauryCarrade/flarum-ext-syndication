@@ -36,19 +36,34 @@
  */
 
 use Flarum\Extend;
-use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\View\Factory;
 use AmauryCarrade\FlarumFeeds\Listener;
 
 return [
     new Extend\Locales(__DIR__ . '/resources/locale'),
+
     (new Extend\Frontend('admin'))
         ->js(__DIR__.'/js/dist/admin.js')
         ->css(__DIR__.'/resources/less/admin.less'),
-    new Extend\Compat(function (Dispatcher $events) {
-        $events->subscribe(Listener\AddFeedsRoutes::class);
-    }),
+
+    (new Extend\Routes('forum'))
+        ->get('/rss', 'feeds.rss.global', 'AmauryCarrade\FlarumFeeds\Controller\DiscussionsActivityFeedController')
+        ->get('/atom', 'feeds.atom.global', 'AmauryCarrade\FlarumFeeds\Controller\DiscussionsActivityFeedController')
+
+        ->get('/rss/d', 'feeds.rss.discussions', 'AmauryCarrade\FlarumFeeds\Controller\LastDiscussionsFeedController')
+        ->get('/atom/d', 'feeds.atom.discussions', 'AmauryCarrade\FlarumFeeds\Controller\LastDiscussionsFeedController')
+
+        ->get('/rss/d/{id:\d+(?:-[^/]*)?}', 'feeds.rss.discussion', 'AmauryCarrade\FlarumFeeds\Controller\DiscussionFeedController')
+        ->get('/atom/d/{id:\d+(?:-[^/]*)?}', 'feeds.atom.discussion', 'AmauryCarrade\FlarumFeeds\Controller\DiscussionFeedController')
+
+        ->get('/rss/t/{tag}', 'feeds.rss.tag', 'AmauryCarrade\FlarumFeeds\Controller\TagsFeedController')
+        ->get('/atom/t/{tag}', 'feeds.atom.tag', 'AmauryCarrade\FlarumFeeds\Controller\TagsFeedController')
+
+        ->get('/rss/t/{tag}/d', 'feeds.rss.tag_discussions', 'AmauryCarrade\FlarumFeeds\Controller\LastDiscussionsByTagFeedController')
+        ->get('/atom/t/{tag}/d', 'feeds.atom.tag_discussions', 'AmauryCarrade\FlarumFeeds\Controller\LastDiscussionsByTagFeedController'),
+
     (new Extend\Frontend('forum'))->content(Listener\AddClientLinks::class),
+
     function (Factory $views) {
         $views->addNamespace('flarum-feeds', __DIR__.'/views');
     },
