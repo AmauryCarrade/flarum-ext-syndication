@@ -37,50 +37,41 @@
 
 namespace AmauryCarrade\FlarumFeeds\Controller;
 
-use Flarum\Extension\ExtensionManager;
-use Flarum\Http\Exception\RouteNotFoundException;
-use Flarum\Settings\SettingsRepositoryInterface;
-use Flarum\Tags\TagRepository;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Intervention\Image\Exception\NotFoundException;
-use Psr\Http\Message\ServerRequestInterface as Request;
-use Flarum\Api\Client as ApiClient;
-use Illuminate\Contracts\View\Factory;
-use Symfony\Component\Translation\TranslatorInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+use Zend\Diactoros\Response\RedirectResponse;
 
 
-/**
- * Displays a feed containing the last discussions with activity in a given tag.
- *
- * @package AmauryCarrade\FlarumFeeds\Controller
- */
-class TagsFeedController extends DiscussionsActivityFeedController
+class RedirectsController implements RequestHandlerInterface
 {
     /**
-     * @var TagRepository
+     * Handles a request and produces a response.
+     *
+     * May call other collaborating code to generate the response.
+     *
+     * @param ServerRequestInterface $request
+     * @return ResponseInterface
      */
-    private $tagRepository;
-
-    public function __construct(Factory $view, ApiClient $api, TranslatorInterface $translator, SettingsRepositoryInterface $settings, ExtensionManager $extensions, TagRepository $tagRepository, $lastTopics = false)
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        parent::__construct($view, $api, $translator, $settings, $lastTopics);
+        $path = strtolower($request->getUri()->getPath());
+        $type = starts_with($path, '/atom') ? 'atom': 'rss';
 
-        $this->tagRepository = $tagRepository;
+        $target = null;
 
-        if (!$extensions->isEnabled("flarum-tags"))
-            throw new RouteNotFoundException("Tag feeds not available without the tag extension.");
-    }
-
-    protected function getTags(Request $request)
-    {
         $queryParams = $request->getQueryParams();
         $tag_slug = array_get($queryParams, 'tag');
 
-        if (!$this->tagRepository->getIdForSlug($tag_slug))
+        if ($tag_slug != null)
         {
-            throw new RouteNotFoundException("This tag does not exist.");
+            $target = '/' . $type . '/t/' . $tag_slug . '/discussions';
+        }
+        else
+        {
+            $target = '/' . $type . '/discussions';
         }
 
-        return [$tag_slug];
+        return new RedirectResponse($target, 301);
     }
 }
