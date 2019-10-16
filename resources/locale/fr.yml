@@ -23,11 +23,11 @@ amaurycarrade-syndication:
       title: "Paramètres des flux RSS & Atom"
       full-text:
         label: "Textes complets dans les flux"
-        help: |
+        help: >-
           Si désactivé, les flux RSS et Atom contiendront un extrait des messages,
           et non le texte complet ; les utilisateurs devront aller sur le forum pour
           lire l'intégralité.
-        recommendation: |
+        recommendation: >-
           Je recommanderais de laisser cette option active, afin de respecter les
           utilisateurs lisant le forum depuis un aggrégateur RSS — s'il y en a.
       html:
