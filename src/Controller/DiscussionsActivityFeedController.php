@@ -137,13 +137,22 @@ class DiscussionsActivityFeedController extends AbstractFeedController
                 $content->contentHtml = '';
             }
 
+            $userRelation = null;
+            if($this->lastTopics && isset($discussion->relationships->user)) {
+                $userRelation = $discussion->relationships->user;
+            } elseif (isset($discussion->relationships->lastPostedUser)) {
+                $userRelation = $discussion->relationships->lastPostedUser;
+            }
+
             $entries[] = [
                 'title'       => $discussion->attributes->title,
                 'content'     => $this->summarize($this->stripHTML($content->contentHtml)),
                 'id'          => $this->url->to('forum')->route('discussion', ['id' => $discussion->id . '-' . $discussion->attributes->slug]),
                 'permalink'   => $this->url->to('forum')->route('discussion', ['id' => $discussion->id . '-' . $discussion->attributes->slug, 'near' => $content->number]) . '/' . $content->number,  // TODO same than DiscussionFeedController
                 'pubdate'     => $this->parseDate($this->lastTopics ? $discussion->attributes->createdAt : $discussion->attributes->lastPostedAt),
-                'author'      => $this->getRelationship($last_discussions, $this->lastTopics ? $discussion->relationships->user : $discussion->relationships->lastPostedUser)->username
+                'author'      => $userRelation !== null
+                                    ? $this->getRelationship($last_discussions, $userRelation)->username
+                                    : $this->translator->trans('core.lib.username.deleted_text')
             ];
 
             $modified = $this->parseDate($this->lastTopics ? $discussion->attributes->createdAt : $discussion->attributes->lastPostedAt);

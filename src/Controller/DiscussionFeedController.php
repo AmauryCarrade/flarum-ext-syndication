@@ -101,7 +101,9 @@ class DiscussionFeedController extends AbstractFeedController
                 'content'     => $this->summarize($this->stripHTML($post->attributes->contentHtml)),
                 'permalink'   => $this->url->to('forum')->route('discussion', ['id' => $discussion->id . '-' . $discussion->attributes->slug, 'near' => $post->attributes->number]) . '/' . $post->attributes->number, // TODO check out why the near parameter refuses to work
                 'pubdate'     => $this->parseDate($post->attributes->createdAt),
-                'author'      => $this->getRelationship($posts, $post->relationships->user)->username
+                'author'      => ($post->relationships->user !== null)
+                                    ? $this->getRelationship($posts, $post->relationships->user)->username
+                                    : $this->translator->trans('core.lib.username.deleted_text')
             ];
 
             $modified = $this->parseDate($post->attributes->editedAt || $post->attributes->createdAt);
