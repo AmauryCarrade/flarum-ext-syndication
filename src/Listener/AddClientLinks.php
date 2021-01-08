@@ -39,6 +39,8 @@ namespace AmauryCarrade\FlarumFeeds\Listener;
 
 use DirectoryIterator;
 use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Support\Str;
+use Flarum\Foundation\Config;
 use Flarum\Event\ConfigureLocales;
 use Flarum\Frontend\Document;
 use Flarum\Frontend\Event\Rendering;
@@ -53,8 +55,14 @@ class AddClientLinks
      */
     private $translator;
 
-    public function __construct(TranslatorInterface $translator)
+    /**
+     * @var Config
+     */
+    private $config;
+
+    public function __construct(Config $config, TranslatorInterface $translator)
     {
+        $this->config = $config;
         $this->translator = $translator;
     }
 
@@ -66,7 +74,7 @@ class AddClientLinks
         $path = $request->getUri()->getPath();
 
         // TODO use reverse routing
-        if (class_exists('Flarum\Tags\Tag') && starts_with($path, '/t/'))
+        if (class_exists('Flarum\Tags\Tag') && Str::startsWith($path, '/t/'))
         {
             // TODO use real tag name
             $tag_name = str_replace('/t/', '', $path);
@@ -74,7 +82,7 @@ class AddClientLinks
             $this->addAtomFeed($view, 'atom' . $path, $this->translator->trans('amaurycarrade-syndication.forum.autodiscovery.tag_activity', ['{tag}' => $tag_name]));
             $this->addAtomFeed($view, 'atom' . $path . '/d', $this->translator->trans('amaurycarrade-syndication.forum.autodiscovery.tag_new_discussions', ['{tag}' => $tag_name]));
         }
-        else if (starts_with($path, '/d/'))
+        else if (Str::startsWith($path, '/d/'))
         {
             // Removes the post number (if any). Reverse routing would be better.
             $path_parts = explode('/', $path);
@@ -86,6 +94,6 @@ class AddClientLinks
 
     private function addAtomFeed(Document $view, $url, $title)
     {
-        $view->head[] = '<link rel="alternate" type="application/atom+xml" title="' . $title . '" href="' . app()->url() . '/' . $url . '" />';
+        $view->head[] = '<link rel="alternate" type="application/atom+xml" title="' . $title . '" href="' . $this->config->url() . '/' . $url . '" />';
     }
 }

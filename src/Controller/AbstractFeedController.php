@@ -45,6 +45,7 @@ use Flarum\Http\UrlGenerator;
 use Flarum\Api\Client as ApiClient;
 use Flarum\Settings\SettingsRepositoryInterface;
 use Illuminate\Contracts\View\Factory;
+use Illuminate\Support\Str;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -379,6 +380,6 @@ abstract class AbstractFeedController implements RequestHandlerInterface
     protected function getFeedType(ServerRequestInterface $request)
     {
         $path = strtolower($request->getUri()->getPath());
-        return starts_with($path, '/atom') ? 'atom' : 'rss';
+        return Str::startsWith($path, '/atom') ? 'atom' : 'rss';
     }
 }

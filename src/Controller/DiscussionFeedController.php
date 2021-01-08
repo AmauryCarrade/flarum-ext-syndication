@@ -42,6 +42,7 @@ use Flarum\Settings\SettingsRepositoryInterface;
 use Flarum\User\User;
 use Flarum\Http\Exception\RouteNotFoundException;
 use Illuminate\Contracts\View\Factory;
+use Illuminate\Support\Arr;
 use Symfony\Component\Translation\TranslatorInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -66,7 +67,7 @@ class DiscussionFeedController extends AbstractFeedController
     protected function getFeedContent(Request $request)
     {
         $query_params = $request->getQueryParams();
-        $discussion_id = (int) array_get($query_params, 'id');
+        $discussion_id = (int) Arr::get($query_params, 'id');
 
         $actor = $this->getActor($request);
 
@@ -104,7 +105,7 @@ class DiscussionFeedController extends AbstractFeedController
                 'author'      => $this->getRelationship($posts, $post->relationships->user)->username
             ];
 
-            $modified = $this->parseDate($post->attributes->editedAt || $post->attributes->createdAt);
+            $modified = $this->parseDate(Arr::get($post->attributes, 'editedAt', $post->attributes->createdAt));
 
             if ($lastModified === null || $lastModified < $modified)
             {
