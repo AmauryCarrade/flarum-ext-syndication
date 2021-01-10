@@ -142,7 +142,7 @@ class DiscussionsActivityFeedController extends AbstractFeedController
                 'title'       => $discussion->attributes->title,
                 'content'     => $this->summarize($this->stripHTML($content->contentHtml)),
                 'id'          => $this->url->to('forum')->route('discussion', ['id' => $discussion->id . '-' . $discussion->attributes->slug]),
-                'permalink'   => $this->url->to('forum')->route('discussion', ['id' => $discussion->id . '-' . $discussion->attributes->slug, 'near' => $content->number]) . '/' . $content->number,  // TODO same than DiscussionFeedController
+                'permalink'   => $this->url->to('forum')->route('discussion', ['id' => $discussion->attributes->slug, 'near' => $content->number]),
                 'pubdate'     => $this->parseDate($this->lastTopics ? $discussion->attributes->createdAt : $discussion->attributes->lastPostedAt),
                 'author'      => $this->getRelationship($last_discussions, $this->lastTopics ? $discussion->relationships->user : $discussion->relationships->lastPostedUser)->username
             ];
