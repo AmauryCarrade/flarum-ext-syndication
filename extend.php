@@ -69,7 +69,5 @@ return [
 
     (new Extend\Frontend('forum'))->content(Listener\AddClientLinks::class),
 
-    function (Factory $views) {
-        $views->addNamespace('flarum-feeds', __DIR__.'/views');
-    },
+    (new Extend\View)->namespace('flarum-feeds', __DIR__.'/views'),
 ];
