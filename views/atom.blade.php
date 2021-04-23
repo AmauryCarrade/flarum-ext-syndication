@@ -20,7 +20,7 @@
             type="html"
         @endif><![CDATA[{!! $entry['content'] !!}]]></content>
         <author>
-            <name>{{ $entry['author'] }}</name>
+            <name><![CDATA[{{ $entry['author'] }}]]></name>
         </author>
     </entry>
     @endforeach
