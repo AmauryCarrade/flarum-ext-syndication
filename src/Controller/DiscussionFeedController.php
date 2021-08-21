@@ -42,6 +42,7 @@ use Flarum\Settings\SettingsRepositoryInterface;
 use Flarum\User\User;
 use Flarum\Http\Exception\RouteNotFoundException;
 use Illuminate\Contracts\View\Factory;
+use Illuminate\Support\Arr;
 use Symfony\Component\Translation\TranslatorInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -66,7 +67,7 @@ class DiscussionFeedController extends AbstractFeedController
     protected function getFeedContent(Request $request)
     {
         $query_params = $request->getQueryParams();
-        $discussion_id = (int) array_get($query_params, 'id');
+        $discussion_id = (int) Arr::get($query_params, 'id');
 
         $actor = $this->getActor($request);
 
@@ -99,12 +100,12 @@ class DiscussionFeedController extends AbstractFeedController
             $entries[] = [
                 'title'       => $discussion->attributes->title,
                 'content'     => $this->summarize($this->stripHTML($post->attributes->contentHtml)),
-                'permalink'   => $this->url->to('forum')->route('discussion', ['id' => $discussion->id . '-' . $discussion->attributes->slug, 'near' => $post->attributes->number]) . '/' . $post->attributes->number, // TODO check out why the near parameter refuses to work
+                'permalink'   => $this->url->to('forum')->route('discussion', ['id' => $discussion->attributes->slug, 'near' => $post->attributes->number]),
                 'pubdate'     => $this->parseDate($post->attributes->createdAt),
                 'author'      => $this->getRelationship($posts, $post->relationships->user)->username
             ];
 
-            $modified = $this->parseDate($post->attributes->editedAt || $post->attributes->createdAt);
+            $modified = $this->parseDate(Arr::get($post->attributes, 'editedAt', $post->attributes->createdAt));
 
             if ($lastModified === null || $lastModified < $modified)
             {

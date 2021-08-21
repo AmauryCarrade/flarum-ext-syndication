@@ -42,6 +42,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Flarum\User\User;
 use Flarum\Api\Client as ApiClient;
 use Illuminate\Contracts\View\Factory;
+use Illuminate\Support\Arr;
 use Symfony\Component\Translation\TranslatorInterface;
 
 
@@ -93,8 +94,8 @@ class DiscussionsActivityFeedController extends AbstractFeedController
     {
         $queryParams = $request->getQueryParams();
 
-        $sort = array_pull($queryParams, 'sort');
-        $q = array_pull($queryParams, 'q');
+        $sort = Arr::pull($queryParams, 'sort');
+        $q = Arr::pull($queryParams, 'q');
         $tags = $this->getTags($request);
 
         if ($tags != null)
@@ -141,7 +142,7 @@ class DiscussionsActivityFeedController extends AbstractFeedController
                 'title'       => $discussion->attributes->title,
                 'content'     => $this->summarize($this->stripHTML($content->contentHtml)),
                 'id'          => $this->url->to('forum')->route('discussion', ['id' => $discussion->id . '-' . $discussion->attributes->slug]),
-                'permalink'   => $this->url->to('forum')->route('discussion', ['id' => $discussion->id . '-' . $discussion->attributes->slug, 'near' => $content->number]) . '/' . $content->number,  // TODO same than DiscussionFeedController
+                'permalink'   => $this->url->to('forum')->route('discussion', ['id' => $discussion->attributes->slug, 'near' => $content->number]),
                 'pubdate'     => $this->parseDate($this->lastTopics ? $discussion->attributes->createdAt : $discussion->attributes->lastPostedAt),
                 'author'      => $this->getRelationship($last_discussions, $this->lastTopics ? $discussion->relationships->user : $discussion->relationships->lastPostedUser)->username
             ];

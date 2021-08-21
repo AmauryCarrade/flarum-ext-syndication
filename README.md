@@ -2,6 +2,8 @@
 
 Brings RSS and Atom feeds to Flarum.
 
+## Note: This fork is no longer maintained. Check [imorland/syndication](https://github.com/imorland/syndication) for a version compatible with flarum 1.0.0 and up.
+
 ### Installation
 
 ```bash
